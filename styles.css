@@ -133,7 +133,7 @@ button:hover {
 /* Estilos para el título */
 .title {
   text-align: center;
-  font-size: 2rem; /* Tamaño reducido */
+  font-size: 1rem; /* Tamaño reducido */
   color: #ef1212; /* Color rojo */
   font-weight: bold;
   margin-top: 0;
