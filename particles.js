@@ -1,55 +1,52 @@
-const urlSearchParams = new URLSearchParams(window.location.search);
-const messageCustom = urlSearchParams.get('message');
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
 
-if (messageCustom) {
-  const mainMessageElement = document.querySelector('#mainMessage');
-  mainMessageElement.textContent = decodeURI(messageCustom);
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 3 + 1;
+    this.speedY = Math.random() * 1 + 0.3;
+  }
+
+  update() {
+    this.y += this.speedY;
+    if (this.y > canvas.height) {
+      this.y = 0;
+      this.x = Math.random() * canvas.width;
+    }
+  }
+
+  draw() {
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
 
-const btnOpenElement = document.querySelector('#open');
-const btnCloseElement = document.querySelector('#close');
-const redirectBox = document.querySelector('#redirectBox');
+function init() {
+  particles = [];
+  for (let i = 0; i < 100; i++) {
+    particles.push(new Particle());
+  }
+}
 
-btnCloseElement.disabled = true;
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-btnOpenElement.addEventListener('click', () => {
-  btnOpenElement.disabled = true;
-  btnCloseElement.disabled = false;
-  const coverElement = document.querySelector('.cover');
-  coverElement.classList.add('open-cover');
+  particles.forEach(particle => {
+    particle.update();
+    particle.draw();
+  });
 
-  setTimeout(() => {
-    coverElement.style.zIndex = -1;
-    const paperElement = document.querySelector('.paper');
-    paperElement.classList.remove('close-paper');
-    paperElement.classList.add('open-paper');
+  requestAnimationFrame(animate);
+}
 
-    // Mostrar animación del corazón
-    const heartElement = document.querySelector('.heart');
-    heartElement.style.display = 'block';
-
-    // Mostrar el cuadro de redirección
-    redirectBox.style.display = 'block';
-
-  }, 500);
-});
-
-btnCloseElement.addEventListener('click', () => {
-  btnOpenElement.disabled = false;
-  btnCloseElement.disabled = true;
-
-  const coverElement = document.querySelector('.cover');
-  const paperElement = document.querySelector('.paper');
-  paperElement.classList.remove('open-paper');
-  paperElement.classList.add('close-paper');
-
-  setTimeout(() => {
-    coverElement.style.zIndex = 0;
-    coverElement.classList.remove('open-cover');
-
-    // Ocultar el corazón y el cuadro de redirección
-    const heartElement = document.querySelector('.heart');
-    heartElement.style.display = 'none';
-    redirectBox.style.display = 'none';
-  }, 500);
-});
+init();
+animate();
